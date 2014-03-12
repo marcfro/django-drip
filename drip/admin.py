@@ -3,7 +3,11 @@ import json
 
 from django import forms
 from django.contrib import admin
-from django.contrib.auth.models import User
+try:
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+except ImportError:
+    from django.contrib.auth.models import User
 
 from drip.models import Drip, SentDrip, QuerySetRule
 from drip.drips import configured_message_classes, message_class_for
@@ -47,7 +51,7 @@ class DripAdmin(admin.ModelAdmin):
         return render(request, 'drip/timeline.html', locals())
 
     def view_drip_email(self, request, drip_id, into_past, into_future, user_id):
-        from django.shortcuts import render, get_object_or_404
+        from django.shortcuts import get_object_or_404
         from django.http import HttpResponse
         drip = get_object_or_404(Drip, id=drip_id)
         user = get_object_or_404(User, id=user_id)
@@ -75,7 +79,7 @@ class DripAdmin(admin.ModelAdmin):
             request, object_id, extra_context=self.build_extra_context(extra_context))
 
     def get_urls(self):
-        from django.conf.urls.defaults import patterns, url
+        from django.conf.urls import patterns, url
         urls = super(DripAdmin, self).get_urls()
         my_urls = patterns('',
             url(
