@@ -1,12 +1,15 @@
 from datetime import datetime, timedelta
 
 from django.db import models
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ImproperlyConfigured
 try:
     from django.contrib.auth import get_user_model
     User = get_user_model()
 except ImportError:
     from django.contrib.auth.models import User
+except ImproperlyConfigured:
+    from django.conf import settings
+    User = settings.AUTH_USER_MODEL
 
 # just using this to parse, but totally insane package naming...
 # https://bitbucket.org/schinckel/django-timedelta-field/
