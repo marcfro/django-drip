@@ -229,7 +229,7 @@ class DripBase(object):
 
     def queryset(self):
         """
-        Returns a queryset of auth.User who meet the
+        Returns a queryset of User who meet the
         criteria of the drip.
 
         Alternatively, you could create Drips on the fly
