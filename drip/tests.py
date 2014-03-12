@@ -1,15 +1,20 @@
 from datetime import datetime, timedelta
 
 from django.test import TestCase
+from django.core.exceptions import ValidationError, ImproperlyConfigured
 try:
     from django.contrib.auth import get_user_model
     User = get_user_model()
 except ImportError:
     from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
+except ImproperlyConfigured:
+    from django.conf import settings
+    if not getattr(settings, 'AUTH_USER_MODEL', False):
+        raise
+    User = settings.AUTH_USER_MODEL
+
 from django.core import mail
 from django.conf import settings
-
 from drip.models import Drip, SentDrip, QuerySetRule
 from drip.drips import DripBase, DripMessage
 
