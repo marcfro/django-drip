@@ -6,6 +6,7 @@ try:
     User = get_user_model
 except ImportError:
     from django.contrib.auth.models import User
+from django.conf import settings
 UserModelStr = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 # just using this to parse, but totally insane package naming...
