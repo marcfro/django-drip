@@ -1,15 +1,12 @@
 from datetime import datetime, timedelta
-
 from django.db import models
-from django.core.exceptions import ValidationError, ImproperlyConfigured
+from django.core.exceptions import ValidationError
 try:
     from django.contrib.auth import get_user_model
-    User = get_user_model()
+    User = get_user_model
 except ImportError:
     from django.contrib.auth.models import User
-except ImproperlyConfigured:
-    from django.conf import settings
-    User = settings.AUTH_USER_MODEL
+UserModelStr = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 # just using this to parse, but totally insane package naming...
 # https://bitbucket.org/schinckel/django-timedelta-field/
@@ -60,7 +57,7 @@ class SentDrip(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     drip = models.ForeignKey('drip.Drip', related_name='sent_drips')
-    user = models.ForeignKey(User, related_name='sent_drips')
+    user = models.ForeignKey(UserModelStr, related_name='sent_drips')
 
     subject = models.TextField()
     body = models.TextField()
@@ -111,7 +108,7 @@ class QuerySetRule(models.Model):
 
     def clean(self):
         try:
-            self.apply(User.objects.all())
+            self.apply(User().objects.all())
         except Exception as e:
             raise ValidationError(
                 '%s raised trying to apply rule: %s' % (type(e).__name__, e))
